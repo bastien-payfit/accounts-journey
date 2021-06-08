@@ -37,13 +37,12 @@ GROUP BY
     a.id,
     a.name;
 
--- @block Same as above but first nature and last nature
+-- @block Same as above but first nature
 WITH no_nature as (
     SELECT 
         a.id account_id,
         a.name as account_name,
-        MIN(lar.assignement_date__c) first_assignment_date,
-        MAX(lar.assignement_date__c) last_assignment_date
+        MIN(lar.assignement_date__c) first_assignment_date
     FROM staging_salesforce.batchaccountrelation__c lar 
     JOIN staging_salesforce.account a 
         on lar.account__c = a.id
@@ -51,28 +50,16 @@ WITH no_nature as (
     GROUP BY 
         a.id,
         a.name
-),
-first_nature as(
-    SELECT
-        no_nature.*,
-        b.nature__c first_nature
-    FROM no_nature
-    JOIN staging_salesforce.batchaccountrelation__c lar
-        on no_nature.account_id = lar.account__c
-    JOIN staging_salesforce.batch__c b 
-        on lar.batch__c = b.id
-    WHERE lar.assignement_date__c = no_nature.first_assignment_date
 )
 SELECT
-    first_nature.account_name,
-    first_nature.first_nature,
-    b.nature__c last_nature
-FROM first_nature
+    no_nature.*,
+    b.nature__c first_nature
+FROM no_nature
 JOIN staging_salesforce.batchaccountrelation__c lar
-    on first_nature.account_id = lar.account__c
+    on no_nature.account_id = lar.account__c
 JOIN staging_salesforce.batch__c b 
     on lar.batch__c = b.id
-WHERE lar.assignement_date__c = first_nature.last_assignment_date;
+WHERE lar.assignement_date__c = no_nature.first_assignment_date;
 
 
 -- @block Count distinct first natures
