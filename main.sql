@@ -37,7 +37,7 @@ GROUP BY
     a.id,
     a.name;
 
--- @block Same as above but first nature
+-- @block Accounts and first list nature
 WITH no_nature as (
     SELECT 
         a.id account_id,
