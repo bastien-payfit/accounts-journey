@@ -55,4 +55,38 @@ JOIN staging_salesforce.batch__c b
 WHERE not lar.isdeleted and lar.assignement_date__c is not NULL;
 ```
 ## Dates are taken into account
+### Accounts and first *List* Nature
+Thanks to an intermediary table, we can now find the first *List* nature the *Account* went through.
+
+**More specifically:**
+- The first table contains *Accounts* next to their first assignment date (i.e the assignment date of the first LAR they were associated to).
+- The final `SELECT` joins the first *List* nature to the *Account* based on the first assignment date. We know the assignment date of the first *LAR*. So we just have to find the right *List* nature thanks to this very first *LAR*. Hence the final jointures.
+
+
+
+```sql
+-- @block Accounts and first list nature
+WITH no_nature as (
+    SELECT 
+        a.id account_id,
+        a.name as account_name,
+        MIN(lar.assignement_date__c) first_assignment_date
+    FROM staging_salesforce.batchaccountrelation__c lar 
+    JOIN staging_salesforce.account a 
+        on lar.account__c = a.id
+    WHERE not lar.isdeleted and lar.assignement_date__c is not NULL
+    GROUP BY 
+        a.id,
+        a.name
+)
+SELECT
+    no_nature.*,
+    b.nature__c first_nature
+FROM no_nature
+JOIN staging_salesforce.batchaccountrelation__c lar
+    on no_nature.account_id = lar.account__c
+JOIN staging_salesforce.batch__c b 
+    on lar.batch__c = b.id
+WHERE lar.assignement_date__c = no_nature.first_assignment_date;
+```
 ## Final counts
