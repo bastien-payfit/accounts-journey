@@ -6,14 +6,14 @@ For that matter, [Clément](https://github.com/clementspiers) wanted to see if *
 
 For instance, it would be really informative if we discovered that 90% of *Accounts* on which a demo occurred started their journey in a *List* of nature "Batch" and ended in a *List* of nature "Reassignment".
 
->Clément already knew where their journey ended. **We will discover where it starts.**
+>Clément already knew where their journey ended. **We will discover where it started.**
 
 ## The Looker Dead-End
 I did not find a way to process that info in Looker with simple dimensions, measures or table calculations. The only thread I had left to explore was that of Looker's **derived tables**. 
 
 Unfortunately, data ops are not really fond of this alternative which proves to be very intensive on Redshift resources.
 
-Since Clément does not need the info more than 4 times a year, we settled for a simple SQL request. 
+Since Clément does not need the info more than 4 times a year, we settled for a simple SQL request to run every now and then.
 
 >This doc will walk you through a few intermediary requests to help you understand the final one.
 
